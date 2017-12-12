@@ -14,6 +14,7 @@ function ButtonCtrl($scope,buttonApi){
    $scope.voidTransaction=voidTransaction;
    $scope.completeTransaction=completeTransaction;
    $scope.totalPrice=0;
+   $scope.currentUser = null;
 
   function refreshButtons(){
     $scope.errorMessage='';
