@@ -3,7 +3,7 @@ angular.module('buttons',[])
   .factory('buttonApi',buttonApi)
   .constant('apiUrl','http://localhost:1337'); // CHANGED for the lab 2017!
 
-function ButtonCtrl($scope,buttonApi){
+function ButtonCtrl($scope,$window,buttonApi){
    $scope.buttons=[]; //Initially all was still
    $scope.transactionItems=[];
    $scope.errorMessage='';
@@ -16,6 +16,12 @@ function ButtonCtrl($scope,buttonApi){
    $scope.totalPrice=0;
    $scope.currentUser = null;
    $scope.login = login;
+   $scope.reload = reload;
+
+   function reload() {
+     console.log("Trying to log out");
+      $window.location.reload();
+   }
 
   function refreshButtons(){
     $scope.errorMessage='';
@@ -29,7 +35,7 @@ function ButtonCtrl($scope,buttonApi){
   }
 
   function login(user,pass){
-    console.log("Trying to log in");
+    //console.log("Trying to log in");
     buttonApi.login(user, pass).success(function(res){
       if(res.correct){
         $scope.currentUser = user;
@@ -39,16 +45,17 @@ function ButtonCtrl($scope,buttonApi){
   }
 
   function buttonClick($event){
-    console.log("Button clicked" + $event.target.id);
-    console.log($event);
+    id = $event.target.id;
+    user = $scope.currentUser;
     $scope.errorMessage='';
     if($event.target.id == 11) {
       completeTransaction();
     } else if($event.target.id == 12) {
       voidTransaction();
     } else {
-      buttonApi.clickButton($event.target.id)
+      buttonApi.clickButton(id, user)
         .success(function(transactionItems){
+          console.log($scope.currentUser);
           console.log(transactionItems);
 	        $scope.transactionItems = transactionItems;
 	        refreshButtons();
@@ -61,14 +68,11 @@ function ButtonCtrl($scope,buttonApi){
 	});
       }
   }
-  function changeUser(){} // Need to implement
-  // Creates a new stored table for the completed transaction with the current transaction list,
-  // drop all items from the current transaction table, reset the transaction list and total.
-  // Then, re-load the empty current transaction table.
+
   function completeTransaction(){
     $scope.errorMessage='';
-    buttonApi.completeTransaction()
-      .success(function(data){
+    buttonApi.completeTransaction($scope.currentUser, $scope.totalPrice)
+    .then(function(){
         $scope.totalPrice=0;
         $scope.transactionItems=[];
         refreshButtons();
@@ -81,7 +85,7 @@ function ButtonCtrl($scope,buttonApi){
 
   function listTransaction(){ // Return a JSON of the current transaction table - includes item, quantity, price, total
     $scope.errorMessage='';
-    console.log("in listTransaction()");
+    console.log("in listTransaction");
     buttonApi.listTransaction()
       .success(function(data){
         $scope.transactionItems=data;
@@ -118,7 +122,7 @@ function ButtonCtrl($scope,buttonApi){
 	      listTransaction();
       })
       .error(function(){
-        $scope.errorMessage="Failed to void transaction";
+        $scope.errorMessage="Failedid to void transaction";
       });
   }
   listTransaction();  //load the JSON of the current transaction table
@@ -131,8 +135,8 @@ function buttonApi($http,apiUrl){
       var url = apiUrl + '/buttons';
       return $http.get(url);
     },
-    clickButton: function(id){id
-      var url = apiUrl+'/click?id='+id;
+    clickButton: function(id, user){
+      var url = apiUrl+'/click?id='+id+ '&user=' +user;
       return $http.post(url); // Easy enough to do this way
     },
     getUser: function(){
@@ -144,7 +148,7 @@ function buttonApi($http,apiUrl){
       return $http.get(url);
     },
     completeTransaction: function(){
-      var url = apiUrl + '/sale';
+      var url = apiUrl + '/sale' + user + '/' + total;
       return $http.get(url);
     },
     voidTransaction: function(){

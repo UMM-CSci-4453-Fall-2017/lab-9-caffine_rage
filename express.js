@@ -21,17 +21,19 @@ app.get("/buttons",function(req,res){
 });
 
 app.post("/click",function(req,res){
+  var user = req.param('user');
   var id = req.param('id');
-  var sql = 'CALL fluto006.addItem('+id+')';
+  var sql = 'CALL fluto006.newAddItem('+id+', "'+user+'")';
   console.log("Attempting sql ->"+sql+"<-");
 
   connection.query(sql,(function(res){return function(err,rows,fields){
-     if(err){console.log("Error: couldn't add item to transaction table");
-             console.log(err);
-             res.send(err);
-           }
-    res.send("");
-  }})(res));
+    if(err){console.log("Error: couldn't add item to transaction table");
+    console.log("Attempting sql ->"+sql+"<-");
+    console.log(err);
+    res.send(err);
+  }
+  res.send("");
+}})(res));
 });
 
 app.get("/deleteItem",function(req,res){
@@ -49,7 +51,7 @@ app.get("/deleteItem",function(req,res){
 });
 
 // Your other API handlers go here!
-app.get("/sale",function(req,res){
+app.get("/sale/:user/:total/",function(req,res){
   var sql = 'CALL fluto006.completeTransaction';
   connection.query(sql, (function(res){return function(err,rows,fields){
     if(err){
@@ -99,5 +101,7 @@ app.get("/login/:user/:pass", function(req,res) {
      res.send(resp);
   }})(res));
 });
+
+
 
 app.listen(port);
