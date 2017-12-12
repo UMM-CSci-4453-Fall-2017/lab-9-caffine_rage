@@ -51,8 +51,10 @@ app.get("/deleteItem",function(req,res){
 });
 
 // Your other API handlers go here!
-app.get("/sale/:user/:total/",function(req,res){
-  var sql = 'CALL fluto006.completeTransaction';
+app.get("/sale",function(req,res){
+  var user = req.param('user');
+  var total = req.param('total');
+  var sql = 'CALL fluto006.archive_testing("'+user+'", '+total+')';
   connection.query(sql, (function(res){return function(err,rows,fields){
     if(err){
 	console.log("Error: couldn't complete transaction");
@@ -72,7 +74,7 @@ app.get("/void",function(req,res){
     res.send(rows);
   }})(res));
 });
-
+'/'+
 app.get("/list",function(req,res){
   var sql = 'SELECT * FROM fluto006.current_transaction';
   connection.query(sql, (function(res){return function(err,rows,fields){

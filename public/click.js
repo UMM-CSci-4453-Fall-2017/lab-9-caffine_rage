@@ -70,9 +70,11 @@ function ButtonCtrl($scope,$window,buttonApi){
   }
 
   function completeTransaction(){
+    user = $scope.currentUser;
+    totalPrice = $scope.totalPrice;
     $scope.errorMessage='';
-    buttonApi.completeTransaction($scope.currentUser, $scope.totalPrice)
-    .then(function(){
+    buttonApi.completeTransaction(user, totalPrice)
+    .success(function(){
         $scope.totalPrice=0;
         $scope.transactionItems=[];
         refreshButtons();
@@ -147,8 +149,8 @@ function buttonApi($http,apiUrl){
       var url = apiUrl + '/changeUser?id='+id;
       return $http.get(url);
     },
-    completeTransaction: function(){
-      var url = apiUrl + '/sale' + user + '/' + total;
+    completeTransaction: function(user, total){
+      var url = apiUrl + '/sale?user='+user+ '&total='+total;
       return $http.get(url);
     },
     voidTransaction: function(){
