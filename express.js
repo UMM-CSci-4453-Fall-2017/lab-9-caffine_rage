@@ -82,4 +82,22 @@ app.get("/list",function(req,res){
   }})(res));
 });
 
+app.get("/login/:user/:pass", function(req,res) {
+  var resp = {};
+  var user = req.params.user;
+  var pass = req.params.pass;
+  var sql = "SELECT * FROM fluto006.user_info WHERE user = '" +user+ "'";
+  console.log("Calling " + sql);
+  connection.query(sql,(function(res){
+    return function(err,rows,fields){
+     if(err){
+       resp.err = err;
+       console.log("Houston we have a problem (again): ");
+       console.log(err);
+     }
+     resp.correct = rows[0].password == pass;
+     res.send(resp);
+  }})(res));
+});
+
 app.listen(port);

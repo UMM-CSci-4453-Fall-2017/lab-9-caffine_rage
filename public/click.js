@@ -15,6 +15,7 @@ function ButtonCtrl($scope,buttonApi){
    $scope.completeTransaction=completeTransaction;
    $scope.totalPrice=0;
    $scope.currentUser = null;
+   $scope.login = login;
 
   function refreshButtons(){
     $scope.errorMessage='';
@@ -26,6 +27,17 @@ function ButtonCtrl($scope,buttonApi){
          $scope.errorMessage="Unable to load Buttons:  Database request failed";
       });
   }
+
+  function login(user,pass){
+    console.log("Trying to log in");
+    buttonApi.login(user, pass).success(function(res){
+      if(res.correct){
+        $scope.currentUser = user;
+        refreshButtons();
+      }
+    });
+  }
+
   function buttonClick($event){
     console.log("Button clicked" + $event.target.id);
     console.log($event);
@@ -49,7 +61,6 @@ function ButtonCtrl($scope,buttonApi){
 	});
       }
   }
-  function getUser(){} // Need to implement
   function changeUser(){} // Need to implement
   // Creates a new stored table for the completed transaction with the current transaction list,
   // drop all items from the current transaction table, reset the transaction list and total.
@@ -146,6 +157,11 @@ function buttonApi($http,apiUrl){
     },
     deleteItem: function(id){
       var url = apiUrl + '/deleteItem?id='+id;
+      return $http.get(url);
+    },
+    login: function(user, pass){
+      var url = apiUrl + '/login/' + user + '/' + pass;
+      console.log(url);
       return $http.get(url);
     }
  };
