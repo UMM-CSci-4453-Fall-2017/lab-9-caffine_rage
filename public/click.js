@@ -158,14 +158,6 @@ function buttonApi($http, apiUrl) {
 			var url = apiUrl + '/click?id=' + id + '&user=' + user;
 			return $http.post(url); // Easy enough to do this way
 		},
-		getUser: function () {
-			var url = apiUrl + '/currentUser';
-			return $http.get(url);
-		},
-		changeUser: function (id) { //need to add id to credentials.json to log in as different user
-			var url = apiUrl + '/changeUser?id=' + id;
-			return $http.get(url);
-		},
 		completeTransaction: function (user, total) {
 			var url = apiUrl + '/sale?user=' + user + '&total=' + total;
 			return $http.get(url);
