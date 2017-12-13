@@ -56,5 +56,34 @@
             </table>
          </div>
       </div>
+      <div class="col-sm-2">
+         <div  ng-show="receipt[0]">
+            <div>
+              <h3> Receipt </h3>
+               <h5>Sold by {{currentUser}}</h5>
+            </div>
+            <div>
+               <table>
+                  <colgroup>
+                     <col span="2">
+                  </colgroup>
+                  <tr>
+                     <th>Item</th>
+                     <th>Quanity</th>
+                     <th>Price</th>
+                  </tr>
+                  <tr ng-repeat="item in receipt">
+                     <td>{{item.item}}</td>
+                     <td>{{item.quantity}}</td>
+                     <td>{{item.total}}</td>
+                  </tr>
+               </table>
+               <div>
+                  Total: ${{totalreceipt(receipt).toFixed(2)}}
+               </div>
+            </div>
+            <button type="button" ng-click="emptyreceipt()">Close</button>
+         </div>
+      </div>
    </body>
 </html>
