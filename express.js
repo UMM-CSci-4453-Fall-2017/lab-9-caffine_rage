@@ -54,7 +54,7 @@ app.get("/deleteItem",function(req,res){
 app.get("/sale",function(req,res){
   var user = req.param('user');
   var total = req.param('total');
-  var sql = 'CALL fluto006.archive_testing("'+user+'", '+total+')';
+  var sql = 'CALL fluto006.archive_testing("'+user+'", '+total+'); CREATE OR REPLACE VIEW transactionSummary as SELECT transactionsID, MIN(startTime) as startTime, MAX(stopTime) as stopTime, TIMESTAMPDIFF(second, MIN(startTime), MAX(stopTime)) as DurationSecs, user, total_price FROM archive_transactions_table GROUP BY transactionsID ORDER BY transactionsID;';
   connection.query(sql, (function(res){return function(err,rows,fields){
     if(err){
 	console.log("Error: couldn't complete transaction");
